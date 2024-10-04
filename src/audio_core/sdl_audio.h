@@ -14,11 +14,11 @@ public:
     SDLAudio() = default;
     virtual ~SDLAudio() = default;
 
-    s32 AudioOutOpen(int type, u32 samples_num, u32 freq,
+    int AudioOutOpen(int type, u32 samples_num, u32 freq,
                      Libraries::AudioOut::OrbisAudioOutParamFormat format);
     s32 AudioOutOutput(s32 handle, const void* ptr);
-    s32 AudioOutSetVolume(s32 handle, s32 bitflag, s32* volume);
-    s32 AudioOutGetStatus(s32 handle, int* type, int* channels_num);
+    bool AudioOutSetVolume(s32 handle, s32 bitflag, s32* volume);
+    bool AudioOutGetStatus(s32 handle, int* type, int* channels_num);
 
 private:
     struct PortOut {
@@ -32,8 +32,12 @@ private:
         u8 sample_size = 0;
         bool isOpen = false;
     };
+
+    bool isValidHandle(s32 handle) const; // Utility function to check handle validity
+
     std::shared_mutex m_mutex;
-    std::array<PortOut, Libraries::AudioOut::SCE_AUDIO_OUT_NUM_PORTS> portsOut;
+    std::array<PortOut, 22> portsOut; // main up to 8 ports, BGM 1 port, voice up to 4 ports,
+                                      // personal up to 4 ports, padspk up to 5 ports, aux 1 port
 };
 
 } // namespace Audio
